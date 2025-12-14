@@ -23,7 +23,7 @@ const messageSchema: Schema<Message> = new Schema({
 
 
 export interface User extends Document {
-    name: string;
+    username: string;
     email: string;
     password: string;
     createdAt: Date;
@@ -34,7 +34,7 @@ export interface User extends Document {
 }
 
 const userSchema: Schema<User> = new Schema({
-    name: {
+    username: {
         type: String,
         required: [true, "Name is required"],
         unique: true
