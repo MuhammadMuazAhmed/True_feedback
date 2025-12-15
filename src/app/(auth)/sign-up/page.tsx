@@ -67,7 +67,7 @@ export default function SignupFormDemo() {
         try {
             const response = await axios.post('/api/sign-up', data)
             toast.success("Signup successful")
-            router.replace("/verify")
+            router.replace(`/verify/${username}`)
         } catch (error) {
             console.log(error)
             toast.error("Signup failed")
