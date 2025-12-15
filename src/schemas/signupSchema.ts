@@ -8,7 +8,7 @@ export const validateusername = z
 
 
 
-const signupSchema = z.object({
+export const signupSchema = z.object({
     username: validateusername,
     email: z
         .string()
