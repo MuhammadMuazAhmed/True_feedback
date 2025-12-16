@@ -11,7 +11,7 @@ import { acceptMessageSchema } from "@/schemas/acceptMessage";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCcw } from "lucide-react";
-import Card from "@/components/ui/card";
+import MessageCard from "@/components/message-card";
 
 export default function Dashboard() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -39,7 +39,6 @@ export default function Dashboard() {
             setLoading(true)
             const response = await axios.get('/api/accept-messages')
             setValue('acceptMessages', response.data.isReceivingMessages)
-            setMessages(response.data)
         } catch (error) {
             console.error('Error fetching messages:', error)
             toast.error('Failed to fetch messages')
@@ -145,7 +144,7 @@ export default function Dashboard() {
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {messages.length > 0 ? (
                     messages.map((message) => (
-                        <Card
+                        <MessageCard
                             key={String(message._id)}
                             message={message}
                             onMessageDelete={handleDeleteMessages}

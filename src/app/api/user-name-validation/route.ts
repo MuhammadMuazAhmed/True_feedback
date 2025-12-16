@@ -25,7 +25,7 @@ export async function GET(request: Request) {
                 { status: 400 }
             )
         }
-        const user = await usermodel.findOne({ username: queryParams.username, isVerified: true });
+        const user = await usermodel.findOne({ username: queryParams.username });
         if (user) {
             return Response.json({ message: "Username already exists" }, { status: 400 });
         }

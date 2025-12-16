@@ -18,7 +18,7 @@ export async function POST(request: Request) {
                 }
             );
         }
-        const userVerifiedByUsername = await UserModel.findOne({ username, isverified: true });
+        const userVerifiedByUsername = await UserModel.findOne({ username, isVerified: true });
         if (userVerifiedByUsername) {
             return Response.json(
                 {
@@ -30,17 +30,25 @@ export async function POST(request: Request) {
                 }
             );
         }
-        const userVerifiedByEmail = await UserModel.findOne({ email, isverified: true });
+        const userVerifiedByEmail = await UserModel.findOne({ email, isVerified: true });
         if (userVerifiedByEmail) {
-            return Response.json(
-                {
-                    success: false,
-                    message: "User already exists"
-                },
-                {
-                    status: 400
-                }
-            );
+            if (userVerifiedByEmail.isVerified) {
+                return Response.json(
+                    {
+                        success: false,
+                        message: "User already exists"
+                    },
+                    {
+                        status: 400
+                    }
+                );
+            } else {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                userVerifiedByEmail.password = hashedPassword;
+                userVerifiedByEmail.verificationCode = String(Math.floor(100000 + Math.random() * 900000));
+                userVerifiedByEmail.verificationCodeExpiry = new Date(Date.now() + 60 * 60 * 1000);
+                await userVerifiedByEmail.save();
+            }
         }
         else {
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,9 +59,9 @@ export async function POST(request: Request) {
                 email,
                 password: hashedPassword,
                 verificationCode,
-                isverified: false,
+                isVerified: false,
                 verificationCodeExpiry: expiryDate,
-                isReceivngMessages: true,
+                isReceivingMessages: true,
                 messages: []
             });
             await user.save();

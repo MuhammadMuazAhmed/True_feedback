@@ -139,8 +139,8 @@ export default function SignupFormDemo() {
             </form>
             <div className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-300">
                 Already have an account?{" "}
-                <Link href="/sign-in" className="font-medium text-neutral-800 dark:text-neutral-200">
-                    Sign in
+                <Link href="/sign-up" className="font-medium text-white dark:text-neutral-200">
+                    Sign up
                 </Link>
             </div>
         </div>

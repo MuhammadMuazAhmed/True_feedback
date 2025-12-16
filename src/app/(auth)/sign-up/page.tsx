@@ -44,17 +44,14 @@ export default function SignupFormDemo() {
                 setIsCheckingUsername(true)
                 setUsernameMessage("")
                 try {
-                    axios.get(`/api/user-name-validation?username=${username}`)
-                        .then((res) => {
-                            setUsernameMessage(res.data.message)
-                            setIsCheckingUsername(false)
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                            setIsCheckingUsername(false)
-                        })
+                    const res = await axios.get(`/api/user-name-validation?username=${username}`)
+                    {
+                        setUsernameMessage(res.data.message)
+                        setIsCheckingUsername(false)
+                    }
                 } catch (error) {
                     console.log(error)
+                    setUsernameMessage("username not available")
                     setIsCheckingUsername(false)
                 }
             }
@@ -76,7 +73,7 @@ export default function SignupFormDemo() {
         }
     }
     return (
-        <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-black p-4 md:rounded-2xl md:p-8 dark:bg-black text-white my-8">
+        <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-black p-4 md:rounded-2xl md:p-8 dark:bg-black text-white my-3 min-h-[calc(87vh-80px)]">
             <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200 text-white">
                 Welcome to True Feedback
             </h2>
@@ -87,9 +84,22 @@ export default function SignupFormDemo() {
 
 
             <form {...form} onSubmit={form.handleSubmit(handleSubmit)} className="my-8">
-                <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
+                <div className="mb-4">
                     <LabelInputContainer>
-                        <Label htmlFor="username">Username</Label>
+                        <div className="flex justify-between items-center">
+                            <Label htmlFor="username">Username</Label>
+                            {ischeckingusername && <Loader2 className="h-4 w-4 animate-spin text-neutral-500" />}
+                            {!ischeckingusername && usernamemessage && (
+                                <p
+                                    className={`text-sm ${usernamemessage === "Username is available"
+                                        ? "text-green-500"
+                                        : "text-red-500"
+                                        }`}
+                                >
+                                    {usernamemessage}
+                                </p>
+                            )}
+                        </div>
                         <Controller
                             control={form.control}
                             name="username"
@@ -105,7 +115,6 @@ export default function SignupFormDemo() {
                             )}
                         />
                     </LabelInputContainer>
-                    {ischeckingusername && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 </div>
                 <LabelInputContainer className="mb-4">
                     <Label htmlFor="email">Email Address</Label>
@@ -146,7 +155,7 @@ export default function SignupFormDemo() {
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />Please wait...
                             </>) : (
-                            "Sign up &rarr;"
+                            "Sign up;"
                         )
                     }
                     <BottomGradient />
@@ -189,7 +198,7 @@ export default function SignupFormDemo() {
             </form>
             <div className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-300">
                 Already have an account?{" "}
-                <Link href="/sign-in" className="font-medium text-neutral-800 dark:text-neutral-200">
+                <Link href="/sign-in" className="font-medium text-white dark:text-neutral-200">
                     Sign in
                 </Link>
             </div>

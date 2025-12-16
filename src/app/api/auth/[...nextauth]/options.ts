@@ -42,7 +42,11 @@ export const options: NextAuthOptions = {
                     if (!isPasswordValid) {
                         throw new Error("Invalid password");
                     }
-                    return user;
+                    return {
+                        id: user._id.toString(),
+                        username: user.username,
+                        email: user.email
+                    };
                 } catch (error) {
                     console.log("error authorizing user", error);
                     throw new Error("Internal Server Error");
@@ -63,12 +67,14 @@ export const options: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
+                token.username = user.username
             }
             return token;
         },
         async session({ session, token }) {
             if (token) {
                 session.user.id = token.id;
+                session.user.username = token.username as string;
             }
             return session;
         }

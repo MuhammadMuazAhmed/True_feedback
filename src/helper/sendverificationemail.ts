@@ -8,14 +8,14 @@ export async function sendVerificationEmail(
 ): Promise<void> {
     try {
         await resend.emails.send({
-            from: 'onboarding@resend.dev',
+            from: 'Acme <onboarding@resend.dev>',
             to: email,
             subject: 'Verification Code',
             react: VerificationEmail({ otp, username }),
         });
 
-    } catch {
-        console.log("Error sending verification email");
-        throw new Error("Error sending verification email");
+    } catch (error) {
+        console.error("Resend error:", error);
+        throw error;
     }
 }
