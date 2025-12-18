@@ -7,13 +7,13 @@ export async function POST(request: Request) {
     try {
         await dbconnect();
         const session = await getServerSession(options);
-        const { acceptmessages } = await request.json();
+        const { acceptMessages } = await request.json();
         if (!session) {
             return Response.json({ message: "Unauthorized" }, { status: 401 });
         }
         const user = await usermodel.findByIdAndUpdate(
             session.user.id,
-            { isReceivingMessages: acceptmessages },
+            { isReceivingMessages: acceptMessages },
             { new: true }
         );
         return Response.json({ message: "User updated successfully" }, { status: 200 });
