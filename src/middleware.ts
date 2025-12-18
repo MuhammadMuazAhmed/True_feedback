@@ -4,7 +4,10 @@ import { getToken } from "next-auth/jwt";
 // export { default } from "next-auth/middleware";
 
 export async function middleware(req: NextRequest) {
-    const token = await getToken({ req: req});
+    const token = await getToken({
+        req: req,
+        secret: process.env.NEXTAUTH_SECRET
+    });
     const url = req.nextUrl;
 
     // Redirect authenticated users to dashboard if they visit auth pages or home
