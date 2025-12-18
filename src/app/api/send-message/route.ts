@@ -3,9 +3,10 @@ import usermodel from "@/models/user";
 import { Message } from "@/models/user";
 
 export async function POST(request: Request) {
-    await dbconnect();
-    const { username, content } = await request.json();
     try {
+        await dbconnect();
+        const { username, content } = await request.json();
+
         const user = await usermodel.findOne({ username });
         if (!user) {
             return Response.json({ message: "User not found" }, { status: 404 });
@@ -28,10 +29,11 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-    await dbconnect();
-    const { searchParams } = new URL(request.url)
-    const username = searchParams.get("username")
     try {
+        await dbconnect();
+        const { searchParams } = new URL(request.url)
+        const username = searchParams.get("username")
+
         const user = await usermodel.findOne({ username });
         if (!user) {
             return Response.json({ message: "User not found" }, { status: 404 });
@@ -42,7 +44,11 @@ export async function GET(request: Request) {
         if (!user.isReceivingMessages) {
             return Response.json({ message: "User is not receiving messages" }, { status: 400 });
         }
-        return Response.json({ messages: user.username }, { status: 200 });
+        return Response.json({
+            success: true,
+            username: user.username,
+            isReceivingMessages: user.isReceivingMessages
+        }, { status: 200 });
     }
     catch (error) {
         console.error(error);
