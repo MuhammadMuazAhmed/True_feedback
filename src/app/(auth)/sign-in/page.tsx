@@ -55,10 +55,8 @@ export default function SignupFormDemo() {
                 setIsSubmitting(false)
             } else if (result?.ok) {
                 toast.success("Login successful")
-                // Small delay to ensure session is established before redirect
-                setTimeout(() => {
-                    router.replace("/dashboard")
-                }, 100)
+                // Use window.location for reliable redirect after auth state change
+                window.location.href = "/dashboard"
             }
         } catch (error) {
             console.error("Unexpected error during sign in:", error)
