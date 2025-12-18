@@ -10,13 +10,12 @@ export async function middleware(req: NextRequest) {
     });
     const url = req.nextUrl;
 
-    // Redirect authenticated users to dashboard if they visit auth pages or home
+    // Redirect authenticated users to dashboard if they visit auth pages
     if (
         token &&
         (url.pathname === "/sign-in" ||
             url.pathname === "/sign-up" ||
-            url.pathname === "/verify" ||
-            url.pathname === "/")
+            url.pathname === "/verify")
     ) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
     }
@@ -30,5 +29,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/sign-in", "/sign-up", "/verify", "/", "/dashboard/:path*"],
+    matcher: ["/sign-in", "/sign-up", "/verify", "/dashboard", "/dashboard/:path*"],
 };
