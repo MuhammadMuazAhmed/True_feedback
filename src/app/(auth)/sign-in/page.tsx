@@ -39,17 +39,31 @@ export default function SignupFormDemo() {
 
     const handleSubmit = async (data: z.infer<typeof signinSchema>) => {
         setIsSubmitting(true)
-        const result = await signIn("credentials",
-            {
-                email: data.email,
-                password: data.password,
-                redirect: false,
-            })
-        if (result?.error) {
-            toast.error("Login failed")
-        } else {
-            toast.success("Login successful")
-            router.replace("/dashboard")
+        try {
+            const result = await signIn("credentials",
+                {
+                    email: data.email,
+                    password: data.password,
+                    redirect: false,
+                })
+
+            console.log("Sign in result:", result)
+
+            if (result?.error) {
+                console.error("Sign in error:", result.error)
+                toast.error(result.error || "Login failed")
+                setIsSubmitting(false)
+            } else if (result?.ok) {
+                toast.success("Login successful")
+                // Small delay to ensure session is established before redirect
+                setTimeout(() => {
+                    router.replace("/dashboard")
+                }, 100)
+            }
+        } catch (error) {
+            console.error("Unexpected error during sign in:", error)
+            toast.error("An unexpected error occurred")
+            setIsSubmitting(false)
         }
     }
     return (
