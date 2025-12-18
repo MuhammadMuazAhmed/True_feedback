@@ -27,7 +27,10 @@ export default function Dashboard() {
 
 
     const form = useForm({
-        resolver: zodResolver(acceptMessageSchema)
+        resolver: zodResolver(acceptMessageSchema),
+        defaultValues: {
+            acceptMessages: false
+        }
     })
 
     const { register, setValue, watch } = form
