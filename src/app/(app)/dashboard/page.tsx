@@ -16,8 +16,7 @@ import MessageCard from "@/components/message-card";
 export default function Dashboard() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
-    const [iswitchloadingerror, setIswitchloadingerror] = useState(false);
-
+    const [isSwitchLoading, setIsSwitchLoading] = useState(false);
 
     const handleDeleteMessages = async (messageID: string) => {
         setMessages(messages.filter((message) => String(message._id) !== messageID))
@@ -38,33 +37,31 @@ export default function Dashboard() {
     const acceptMessages = watch('acceptMessages')
 
     const fetchacceptmessages = useCallback(async () => {
+        setIsSwitchLoading(true)
         try {
-            setLoading(true)
             const response = await axios.get('/api/accept-messages')
-            setValue('acceptMessages', response.data.isReceivingMessages)
+            setValue('acceptMessages', response.data.isReceivingMessages ?? false)
         } catch (error) {
-            console.error('Error fetching messages:', error)
-            toast.error('Failed to fetch messages')
+            console.error('Error fetching message acceptance status:', error)
+            toast.error('Failed to fetch message acceptance status')
         } finally {
-            setLoading(false)
+            setIsSwitchLoading(false)
         }
     }, [setValue])
 
     const fetchMessages = useCallback(async (refresh: boolean = false) => {
         setLoading(true)
-        setIswitchloadingerror(false)
         try {
             const response = await axios.get('/api/get-messages')
             setMessages(response.data.messages || [])
             if (refresh) {
-                toast.success('Messages fetched successfully')
+                toast.success('Messages refreshed')
             }
         } catch (error) {
             console.error('Error fetching messages:', error)
             toast.error('Failed to fetch messages')
         } finally {
             setLoading(false)
-            setIswitchloadingerror(false)
         }
 
     }, [setLoading, setMessages])
@@ -73,15 +70,22 @@ export default function Dashboard() {
         if (!session || !session.user) return
         fetchacceptmessages()
         fetchMessages()
-    }, [fetchMessages, session, fetchacceptmessages, setValue])
+    }, [fetchMessages, session, fetchacceptmessages])
 
     const handleSwitchChange = async () => {
+        const originalValue = acceptMessages;
+        const nextValue = !originalValue;
+
+        // 1. Optimistically update local UI immediately
+        setValue('acceptMessages', nextValue);
+
         try {
-            await axios.post('/api/accept-messages', { acceptMessages: !acceptMessages })
-            setValue('acceptMessages', !acceptMessages)
-            toast.success('Message acceptance status updated')
+            const response = await axios.post('/api/accept-messages', { acceptMessages: nextValue })
+            toast.success(response.data.message || 'Status updated')
         } catch (error) {
-            console.error('Error fetching messages:', error)
+            // 2. Revert if the server request fails
+            setValue('acceptMessages', originalValue);
+            console.error('Error updating message acceptance status:', error)
             toast.error('Failed to update message acceptance status')
         }
     }
@@ -119,10 +123,9 @@ export default function Dashboard() {
 
                 <div className="mb-4 flex items-center">
                     <Switch
-                        {...register('acceptMessages')}
                         checked={acceptMessages}
                         onCheckedChange={handleSwitchChange}
-                        disabled={iswitchloadingerror}
+                        disabled={isSwitchLoading} // Only disable during initial fetch
                     />
                     <span className="ml-2 text-neutral-200">
                         Accept Messages: {acceptMessages ? 'On' : 'Off'}
