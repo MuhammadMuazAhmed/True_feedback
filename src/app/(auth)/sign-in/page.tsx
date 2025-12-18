@@ -44,24 +44,16 @@ export default function SignupFormDemo() {
                 {
                     email: data.email,
                     password: data.password,
-                    redirect: false,
+                    redirect: true,
+                    callbackUrl: "/dashboard"
                 })
 
-            console.log("Sign in result:", result)
-
+            // If redirect is true, this code won't execute on success
+            // It only runs if there's an error
             if (result?.error) {
                 console.error("Sign in error:", result.error)
                 toast.error(result.error || "Login failed")
                 setIsSubmitting(false)
-            } else if (result?.ok) {
-                console.log("Login successful, about to redirect to dashboard")
-                toast.success("Login successful")
-                // Wait for JWT token to be set in cookies before redirecting
-                console.log("Waiting for token to be set...")
-                setTimeout(() => {
-                    console.log("Executing redirect now...")
-                    window.location.replace("/dashboard")
-                }, 500)
             }
         } catch (error) {
             console.error("Unexpected error during sign in:", error)
