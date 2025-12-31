@@ -92,8 +92,11 @@ export default function Verify() {
                 <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200 text-white text-center">
                     Verify Your Account
                 </h2>
-                <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300 text-white text-center mb-8">
+                <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300 text-white text-center mb-2">
                     Enter the 6-digit code sent to your email
+                </p>
+                <p className="text-[10px] text-neutral-400 dark:text-neutral-500 text-center mb-8 italic">
+                    (If you don't see it, please check your spam folder)
                 </p>
 
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="my-8">
